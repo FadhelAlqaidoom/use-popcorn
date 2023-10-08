@@ -3,6 +3,8 @@ import Navbar from './components/Navbar';
 import ToggleButton from './components/ToggleButton';
 import MoviesList from './components/MoviesList';
 import WatchedListSummary from './components/WatchedListSummary';
+import NumberResults from './components/NumberResults';
+import Box from './components/Box';
 
 const tempMovieData = [
   {
@@ -30,27 +32,16 @@ const tempMovieData = [
 
 export default function App() {
   const [movies, setMovies] = useState(tempMovieData);
-  const [isOpen1, setIsOpen1] = useState(true);
-  const [isOpen2, setIsOpen2] = useState(true);
 
   return (
     <>
-      <Navbar movies={movies} />
+      <Navbar>
+        <NumberResults movies={movies} />
+      </Navbar>
 
       <main className="main">
-        <div className="box">
-          <ToggleButton setIsOpen={setIsOpen1} isOpen={isOpen1} />
-          {isOpen1 && <MoviesList movies={movies} />}
-        </div>
-
-        <div className="box">
-          <ToggleButton setIsOpen={setIsOpen2} isOpen={isOpen2} />
-          {isOpen2 && (
-            <>
-              <WatchedListSummary />
-            </>
-          )}
-        </div>
+        <Box element={<MoviesList movies={movies} />} />
+        <Box element={<WatchedListSummary />} />
       </main>
     </>
   );
