@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import Navbar from './components/Navbar';
-import ToggleButton from './components/ToggleButton';
 import MoviesList from './components/MoviesList';
 import WatchedListSummary from './components/WatchedListSummary';
 import NumberResults from './components/NumberResults';
 import Box from './components/Box';
+
+import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
+import StarRating from './components/StarRating';
 
 const tempMovieData = [
   {
@@ -38,6 +40,7 @@ export default function App() {
       <Navbar>
         <NumberResults movies={movies} />
       </Navbar>
+      <StarRating max="10" />
 
       <main className="main">
         <Box element={<MoviesList movies={movies} />} />

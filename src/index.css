@@ -340,6 +340,20 @@ body {
   justify-content: center;
 }
 
+.star {
+  font-size: 16px; /* or whatever size you prefer */
+}
+
+.star-rating-container {
+  display: flex;
+  align-items: center;
+}
+
+.star-rating-container p {
+  font-size: 16px; /* Same as .star */
+  margin-left: 10px; /* Space between stars and the <p> tag */
+}
+
 /*
 SPACING SYSTEM (px)
 2 / 4 / 8 / 12 / 16 / 24 / 32 / 40 / 48 / 64 / 80 / 96 / 128
