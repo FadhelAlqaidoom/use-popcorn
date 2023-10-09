@@ -7,6 +7,7 @@ import Box from './components/Box';
 
 import StarRating from './components/StarRating';
 import Loader from './components/Loader';
+import ErrorMessage from './components/ErrorMessage';
 
 const KEY = '6ac5e10b';
 
@@ -37,21 +38,33 @@ const KEY = '6ac5e10b';
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-  const [query, setQuery] = useState('breaking bad');
+  const [query, setQuery] = useState('breaking');
   const [isLoading, setIsLoding] = useState(false);
+  const [error, setError] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
-      setIsLoding(true);
-      const res =
-        await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query.replace(
-          /\s+/g,
-          '-'
-        )}
-    `);
-      const data = await res.json();
-      setMovies(data.Search);
-      setIsLoding(false);
+      try {
+        setIsLoding(true);
+        const res =
+          await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query.replace(
+            /\s+/g,
+            '-'
+          )}
+      `);
+        if (!res.ok) {
+          throw new Error('Something went Wrong');
+        }
+        const data = await res.json();
+        if (data.Response === 'False')
+          throw new Error('Movie not found');
+        setMovies(data.Search);
+      } catch (err) {
+        console.log(err.message);
+        setError(err.message);
+      } finally {
+        setIsLoding(false);
+      }
     };
     fetchData();
   }, [query]);
@@ -65,7 +78,9 @@ export default function App() {
 
       <main className="main">
         <Box>
-          {isLoading ? (
+          {error ? (
+            <ErrorMessage error={error} />
+          ) : isLoading ? (
             <Loader />
           ) : (
             <MoviesList movies={movies} setMovies={setMovies} />
