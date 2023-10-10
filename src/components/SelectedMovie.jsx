@@ -6,24 +6,27 @@ import StarRating from './StarRating';
 const SelectedMovie = ({
   movieId,
   KEY,
-  OnCloseMovie,
+  onCloseMovie,
   onAddWatched,
 }) => {
-  const [movie, setMovie] = useState('');
+  const [movie, setMovie] = useState(null);
   const [error, setError] = useState('');
   const [isLoading, setIsLoding] = useState(false);
   const [selected, setSelected] = useState(0);
-  const {
-    Title: title,
-    Released: released,
-    Poster: poster,
-    Runtime: runtime,
-    imdbRating,
-    Plot: plot,
-    Actors: actors,
-    Director: director,
-    Genre: genre,
-  } = movie;
+
+  if (movie !== null) {
+    var {
+      Title: title,
+      Released: released,
+      Poster: poster,
+      Runtime: runtime,
+      imdbRating,
+      Plot: plot,
+      Actors: actors,
+      Director: director,
+      Genre: genre,
+    } = movie;
+  }
   const movieData = {
     title,
     released,
@@ -38,36 +41,63 @@ const SelectedMovie = ({
   };
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setIsLoding(true);
-        setError('');
-        const res =
-          await fetch(`http://www.omdbapi.com/?apikey=${KEY}&i=${movieId}
-      `);
-        if (!res.ok) {
-          throw new Error('Something went Wrong');
-        }
-        const data = await res.json();
-        setMovie(data);
-        document.title = data.Title;
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setIsLoding(false);
+    function callback(e) {
+      if (e.code === 'Escape') {
+        onCloseMovie();
       }
+    }
+    document.addEventListener('keydown', callback);
+    return () => {
+      document.removeEventListener('keydown', callback);
     };
-    fetchData();
+  }, [onCloseMovie]);
+
+  useEffect(() => {
+    if (movieId === null) {
+      setMovie('');
+      setError('');
+      setIsLoding(false);
+    } else {
+      const controller = new AbortController();
+      const fetchData = async () => {
+        try {
+          setIsLoding(true);
+          setError('');
+          const res = await fetch(
+            `http://www.omdbapi.com/?apikey=${KEY}&i=${movieId}
+      `,
+            { signal: controller.signal }
+          );
+          if (!res.ok) {
+            throw new Error('Something went Wrong');
+          }
+          const data = await res.json();
+          setMovie(data);
+          setError('');
+          document.title = data.Title;
+        } catch (err) {
+          if (err.name !== 'AbortError') setError(err.message);
+        } finally {
+          setIsLoding(false);
+        }
+      };
+      fetchData();
+
+      return () => {
+        document.title = 'usePopcorn';
+        controller.abort();
+      };
+    }
   }, [movieId, KEY]);
 
   return error ? (
     <ErrorMessage error={error} />
   ) : isLoading ? (
     <Loader />
-  ) : (
+  ) : movie ? (
     <div className="details">
       <header>
-        <button className="btn-back" onClick={OnCloseMovie}>
+        <button className="btn-back" onClick={onCloseMovie}>
           &larr;
         </button>
         <img src={poster} alt={`${title} poster`} />
@@ -96,7 +126,7 @@ const SelectedMovie = ({
             onClick={() => {
               if (selected > 0) {
                 onAddWatched({ ...movieData, userRating: selected });
-                OnCloseMovie();
+                onCloseMovie();
               }
             }}
           >
@@ -110,7 +140,7 @@ const SelectedMovie = ({
         <p>Directed by {director}</p>
       </section>
     </div>
-  );
+  ) : null;
 };
 
 export default SelectedMovie;
