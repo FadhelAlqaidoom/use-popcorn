@@ -8,6 +8,7 @@ import Box from './components/Box';
 import StarRating from './components/StarRating';
 import Loader from './components/Loader';
 import ErrorMessage from './components/ErrorMessage';
+import SelectedMovie from './components/SelectedMovie';
 
 const KEY = '6ac5e10b';
 
@@ -41,6 +42,15 @@ export default function App() {
   const [query, setQuery] = useState('');
   const [isLoading, setIsLoding] = useState(false);
   const [error, setError] = useState('');
+  const [movieId, setMovieId] = useState(null);
+
+  const handleSelectMovie = (movie) => {
+    setMovieId(movie.imdbID);
+  };
+
+  const handleOnCloseMovie = () => {
+    setMovieId(null);
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -81,7 +91,6 @@ export default function App() {
       <Navbar query={query} setQuery={setQuery}>
         <NumberResults movies={movies} />
       </Navbar>
-      <StarRating max="10" />
 
       <main className="main">
         <Box>
@@ -90,14 +99,29 @@ export default function App() {
           ) : isLoading ? (
             <Loader />
           ) : (
-            <MoviesList movies={movies} setMovies={setMovies} />
+            <MoviesList
+              movies={movies}
+              setMovies={setMovies}
+              setMovieId={setMovieId}
+              onClick={handleSelectMovie}
+            />
           )}
         </Box>
         <Box>
-          <WatchedListSummary
-            watched={watched}
-            setWatched={setWatched}
-          />
+          {movieId ? (
+            <SelectedMovie
+              movieId={movieId}
+              KEY={KEY}
+              handleOnCloseMovie={handleOnCloseMovie}
+            >
+              <StarRating max="10" />
+            </SelectedMovie>
+          ) : (
+            <WatchedListSummary
+              watched={watched}
+              setWatched={setWatched}
+            />
+          )}
         </Box>
       </main>
     </>
