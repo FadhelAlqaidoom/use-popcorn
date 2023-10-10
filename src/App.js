@@ -38,7 +38,7 @@ const KEY = '6ac5e10b';
 export default function App() {
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
-  const [query, setQuery] = useState('breaking');
+  const [query, setQuery] = useState('');
   const [isLoading, setIsLoding] = useState(false);
   const [error, setError] = useState('');
 
@@ -46,6 +46,7 @@ export default function App() {
     const fetchData = async () => {
       try {
         setIsLoding(true);
+        setError('');
         const res =
           await fetch(`http://www.omdbapi.com/?apikey=${KEY}&s=${query.replace(
             /\s+/g,
@@ -56,22 +57,28 @@ export default function App() {
           throw new Error('Something went Wrong');
         }
         const data = await res.json();
-        if (data.Response === 'False')
+        if (data.Response === 'False') {
           throw new Error('Movie not found');
+        }
         setMovies(data.Search);
       } catch (err) {
-        console.log(err.message);
         setError(err.message);
       } finally {
         setIsLoding(false);
       }
     };
+
+    if (query.length < 3) {
+      setMovies([]);
+      setError('');
+      return;
+    }
     fetchData();
   }, [query]);
 
   return (
     <>
-      <Navbar>
+      <Navbar query={query} setQuery={setQuery}>
         <NumberResults movies={movies} />
       </Navbar>
       <StarRating max="10" />
