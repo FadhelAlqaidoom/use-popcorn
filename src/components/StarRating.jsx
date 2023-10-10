@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
 import { AiFillStar, AiOutlineStar } from 'react-icons/ai';
 
-const StarRating = ({ max = 5 }) => {
+const StarRating = ({
+  max = 5,
+  selected,
+  setSelected,
+  userRating = 0,
+}) => {
   const [hover, setHover] = useState(0);
-  const [selected, setSelected] = useState(0);
-
+  const rating = Number(userRating);
   const displayStar = (i) => {
     if (hover > 0) {
       return hover >= i + 1;
@@ -20,7 +24,9 @@ const StarRating = ({ max = 5 }) => {
           key={i}
           onMouseEnter={() => setHover(i + 1)}
           onMouseLeave={() => setHover(0)}
-          onClick={() => setSelected(i + 1)}
+          onClick={() => {
+            setSelected(i + 1);
+          }}
         >
           {displayStar(i) ? (
             <AiFillStar className="star" />
@@ -29,7 +35,7 @@ const StarRating = ({ max = 5 }) => {
           )}
         </span>
       ))}
-      <p>{hover !== 0 ? hover : selected}</p>
+      <p>{rating ? rating : hover !== 0 ? hover : selected}</p>
     </div>
   );
 };

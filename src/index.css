@@ -290,6 +290,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 2.4rem;
+  align-items: center;
 }
 
 .btn-add {
@@ -302,6 +303,8 @@ body {
   font-weight: bold;
   cursor: pointer;
   transition: all 0.3s;
+  width: 100%;
+  align-self: stretch;
 }
 
 .btn-add:hover {
@@ -341,17 +344,20 @@ body {
 }
 
 .star {
-  font-size: 16px; /* or whatever size you prefer */
+  font-size: 20px; /* or whatever size you prefer */
 }
 
 .star-rating-container {
   display: flex;
+  justify-content: space-between;
   align-items: center;
+  width: auto; /* Choose a fixed width that fits your needs */
 }
 
 .star-rating-container p {
   font-size: 16px; /* Same as .star */
-  margin-left: 10px; /* Space between stars and the <p> tag */
+  width: 30px; /* Fixed width */
+  text-align: center;
 }
 
 /*

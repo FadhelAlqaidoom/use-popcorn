@@ -4,8 +4,6 @@ import MoviesList from './components/MoviesList';
 import WatchedListSummary from './components/WatchedListSummary';
 import NumberResults from './components/NumberResults';
 import Box from './components/Box';
-
-import StarRating from './components/StarRating';
 import Loader from './components/Loader';
 import ErrorMessage from './components/ErrorMessage';
 import SelectedMovie from './components/SelectedMovie';
@@ -43,6 +41,22 @@ export default function App() {
   const [isLoading, setIsLoding] = useState(false);
   const [error, setError] = useState('');
   const [movieId, setMovieId] = useState(null);
+
+  const handleAddWatched = (movie) => {
+    const exists = watched.some(
+      (watch) => movie.movieId === watch.movieId
+    );
+
+    if (exists) {
+      setWatched(
+        watched.map((watch) => {
+          return movie.movieId === watch.movieId ? movie : watch;
+        })
+      );
+    } else {
+      setWatched([...watched, movie]);
+    }
+  };
 
   const handleSelectMovie = (movie) => {
     setMovieId(movie.imdbID);
@@ -112,10 +126,9 @@ export default function App() {
             <SelectedMovie
               movieId={movieId}
               KEY={KEY}
-              handleOnCloseMovie={handleOnCloseMovie}
-            >
-              <StarRating max="10" />
-            </SelectedMovie>
+              OnCloseMovie={handleOnCloseMovie}
+              onAddWatched={handleAddWatched}
+            />
           ) : (
             <WatchedListSummary
               watched={watched}

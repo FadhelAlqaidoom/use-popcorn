@@ -29,11 +29,13 @@ const average = (arr) =>
 const WatchedListSummary = ({ watched, setWatched }) => {
   const avgImdbRating = average(
     watched.map((movie) => movie.imdbRating)
-  );
+  ).toFixed(2);
   const avgUserRating = average(
     watched.map((movie) => movie.userRating)
-  );
-  const avgRuntime = average(watched.map((movie) => movie.runtime));
+  ).toFixed(2);
+  const avgRuntime = average(
+    watched.map((movie) => Number(movie.runtime.split(' ')[0]))
+  ).toFixed(1);
   return (
     <>
       <div className="summary">

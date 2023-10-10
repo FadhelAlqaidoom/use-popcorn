@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from 'react';
 import Loader from './Loader';
 import ErrorMessage from './ErrorMessage';
+import StarRating from './StarRating';
 
 const SelectedMovie = ({
   movieId,
-  children,
   KEY,
-  handleOnCloseMovie,
+  OnCloseMovie,
+  onAddWatched,
 }) => {
   const [movie, setMovie] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoding] = useState(false);
+  const [selected, setSelected] = useState(0);
   const {
     Title: title,
     Released: released,
@@ -22,6 +24,18 @@ const SelectedMovie = ({
     Director: director,
     Genre: genre,
   } = movie;
+  const movieData = {
+    title,
+    released,
+    poster,
+    runtime,
+    imdbRating,
+    plot,
+    actors,
+    director,
+    genre,
+    movieId,
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -35,9 +49,6 @@ const SelectedMovie = ({
           throw new Error('Something went Wrong');
         }
         const data = await res.json();
-        if (data.Response === 'False') {
-          throw new Error('Movie not found');
-        }
         setMovie(data);
       } catch (err) {
         setError(err.message);
@@ -55,7 +66,7 @@ const SelectedMovie = ({
   ) : (
     <div className="details">
       <header>
-        <button className="btn-back" onClick={handleOnCloseMovie}>
+        <button className="btn-back" onClick={OnCloseMovie}>
           &larr;
         </button>
         <img src={poster} alt={`${title} poster`} />
@@ -72,7 +83,25 @@ const SelectedMovie = ({
         </div>
       </header>
       <section>
-        <div className="rating">{children}</div>
+        <div className="rating">
+          <StarRating
+            max="10"
+            selected={selected}
+            setSelected={setSelected}
+            userRating={movieData.userRating}
+          />
+          <button
+            className="btn-add"
+            onClick={() => {
+              if (selected > 0) {
+                onAddWatched({ ...movieData, userRating: selected });
+                OnCloseMovie();
+              }
+            }}
+          >
+            Rate
+          </button>
+        </div>
         <p>
           <em>{plot}</em>
         </p>
