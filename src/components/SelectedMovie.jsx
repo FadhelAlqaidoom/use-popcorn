@@ -50,6 +50,7 @@ const SelectedMovie = ({
         }
         const data = await res.json();
         setMovie(data);
+        document.title = data.Title;
       } catch (err) {
         setError(err.message);
       } finally {

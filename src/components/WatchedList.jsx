@@ -1,4 +1,9 @@
+import { useEffect } from 'react';
+
 const WatchedList = ({ watched }) => {
+  useEffect(() => {
+    document.title = 'usePopcorn';
+  }, []);
   return (
     <ul className="list">
       {watched.map((movie) => (
