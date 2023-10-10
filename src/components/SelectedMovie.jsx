@@ -125,7 +125,10 @@ const SelectedMovie = ({
             className="btn-add"
             onClick={() => {
               if (selected > 0) {
-                onAddWatched({ ...movieData, userRating: selected });
+                onAddWatched({
+                  ...movieData,
+                  userRating: selected,
+                });
                 onCloseMovie();
               }
             }}

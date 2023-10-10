@@ -2,7 +2,7 @@ const WatchedList = ({ watched }) => {
   return (
     <ul className="list">
       {watched.map((movie) => (
-        <li key={movie.imdbID}>
+        <li key={movie.title}>
           <img src={movie.poster} alt={`${movie.title} poster`} />
           <h3>{movie.title}</h3>
           <div>
